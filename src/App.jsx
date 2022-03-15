@@ -21,6 +21,59 @@ async function ping(userName) {
   return pingResponse;
 };
 
+async function prompt(event) {
+  const response = await fetch(`${serverURL}/prompt-submit`, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "access-control-request-headers": "content-type",
+      "x-Trigger": "CORS",
+    },
+
+    body: JSON.stringify({
+      userName: event.userName,
+      prompts: {
+        promptOne: {
+          prompt: event.promptOne.text,
+          isLie: event.promptOne.isLie,
+        },
+        promptTwo: {
+          prompt: event.promptTwo.text,
+          isLie: event.promptTwo.isLie,
+        },
+        promptThree: {
+          prompt: event.promptThree.text,
+          isLie: event.promptThree.isLie,
+        },
+      }
+    }),
+  });
+  const pingResponse = await response.text();
+  return pingResponse;
+};
+
+async function vote(event) {
+  const response = await fetch(`${serverURL}/prompt-vote`, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "access-control-request-headers": "content-type",
+      "x-Trigger": "CORS",
+    },
+    body: JSON.stringify({
+      userName: event.username,
+      promptVote: Number(event.vote), 
+    }),
+  });
+  const pingResponse = await response.text();
+  return pingResponse;
+}
+
+
 export class App extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +84,7 @@ export class App extends Component {
 
       promptOne: {
         text: '',
-        isLie: true,
+        isLie: false,
       },
       promptTwo: {
         text: '',
@@ -43,7 +96,17 @@ export class App extends Component {
         isLie: false,
       }
     };
-    // console.log('Orginal', this.state);
+    console.log('Orginal:', this.state);
+  };
+  handleOnSubmit = (event) => {
+    event.preventDefault();
+    this.setState({
+      username: this.state.userName,
+      promptOne: this.state.promptOne,
+      promptTwo: this.state.promptTwo,
+      promptThree: this.state.promptThree,
+      vote: this.state.vote,
+    });
   };
   handleUser = (event) => {
     this.setState({ userName: event.target.value });
@@ -56,8 +119,7 @@ export class App extends Component {
         text: event.target.value
       }
     }
-
-    this.setState(newObj, () => console.log(this.state));
+    this.setState(newObj, () => console.log(newObj));
   };
   checkboxHandler = (event) => {
     let newObj = {
@@ -67,15 +129,24 @@ export class App extends Component {
         isLie: event.target.checked
       }
     }
-    this.setState(newObj, () => console.log('is a lie unchecked'))
+    this.setState(newObj, () => console.log('is a lie checked'))
   };
   voteHandler = (event) => {
     this.setState({ vote: event.target.value })
   };
+  onClickPromptHandler = async () => {
+    const response = await prompt(this.state);
+    console.log('Prompt click:', response);
+  };
+  onClickVoteHandler = async () => {
+    const response = await vote(this.state);
+    console.log("Vote Click:", response);
+  }
   onClickPingHandler = async () => {
     const pingRes = await ping(this.state.userName)
     console.log(pingRes)
   };
+
   //DISPLAYS PAGE===============================================================================
   render() {
     const { userName, vote, promptOne, promptTwo, promptThree } = this.state;
@@ -83,6 +154,7 @@ export class App extends Component {
       <div className="App">
         <h1>Two Truth's And A Lie! </h1>
 
+        <form onSubmit={this.handleOnSubmit}>
         <label>Username:</label>
         <input name='userName' type={userName} onChange={this.handleUser}></input>
         <br />
@@ -109,10 +181,10 @@ export class App extends Component {
         <input type="number" name='vote' value={vote} onChange={this.voteHandler}></input>
         <br />
 
-        <button>Send Prompts</button>
-        <button>Send Vote</button>
+        <button onClick={this.onClickPromptHandler}>Send Prompts</button>
+        <button onClick={this.onClickVoteHandler}>Send Vote</button>
+        </form>
         <button onClick={this.onClickPingHandler}>Send ping</button>
-
       </div>
     );
   };

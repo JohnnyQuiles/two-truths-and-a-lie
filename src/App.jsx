@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-const serverURL = "http://cab2-108-53-232-66.ngrok.io";
+const serverURL = "http://ce44-108-53-232-66.ngrok.io";
 
 async function ping(userName) {
   const response = await fetch(`${serverURL}/ping`, {
@@ -65,13 +65,28 @@ async function vote(event) {
       "x-Trigger": "CORS",
     },
     body: JSON.stringify({
-      userName: event.username,
-      promptVote: Number(event.vote), 
+      userName: event.userName,
+      promptVote: Number(event.vote)
     }),
   });
   const pingResponse = await response.text();
   return pingResponse;
-}
+};
+
+async function poll() {
+  const response = await fetch(`${serverURL}/prompt-poll`, {
+    method: "Get", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "access-control-request-headers": "content-type",
+      "x-Trigger": "CORS",
+    },
+  });
+  const pingResponse = await response.text();
+  return pingResponse;
+};
 
 
 export class App extends Component {
@@ -79,7 +94,7 @@ export class App extends Component {
     super(props);
     this.state = {
       checkbox: true,
-      userName: 'Johnny',
+      userName: '',
       vote: 0,
 
       promptOne: {
@@ -96,7 +111,7 @@ export class App extends Component {
         isLie: false,
       }
     };
-    console.log('Orginal:', this.state);
+    // console.log('Orginal:', this.state);
   };
   handleOnSubmit = (event) => {
     event.preventDefault();
@@ -135,16 +150,22 @@ export class App extends Component {
     this.setState({ vote: event.target.value })
   };
   onClickPromptHandler = async () => {
-    const response = await prompt(this.state);
-    console.log('Prompt click:', response);
+    const promptData = await prompt(this.state)
+    console.log('Prompt click:', promptData);
   };
   onClickVoteHandler = async () => {
-    const response = await vote(this.state);
-    console.log("Vote Click:", response);
-  }
+    const voteData = await vote(this.state);
+    console.log('Vote click:', voteData);
+  };
   onClickPingHandler = async () => {
     const pingRes = await ping(this.state.userName)
     console.log(pingRes)
+  };
+  onClickPollHandler = async () => {
+    const pollRes = await poll();
+    const parsePoll = JSON.parse(pollRes)
+    console.log("Poll response:", pollRes);
+    console.log(parsePoll);
   };
 
   //DISPLAYS PAGE===============================================================================
@@ -154,7 +175,6 @@ export class App extends Component {
       <div className="App">
         <h1>Two Truth's And A Lie! </h1>
 
-        <form onSubmit={this.handleOnSubmit}>
         <label>Username:</label>
         <input name='userName' type={userName} onChange={this.handleUser}></input>
         <br />
@@ -183,8 +203,31 @@ export class App extends Component {
 
         <button onClick={this.onClickPromptHandler}>Send Prompts</button>
         <button onClick={this.onClickVoteHandler}>Send Vote</button>
-        </form>
         <button onClick={this.onClickPingHandler}>Send ping</button>
+        <hr />
+        <br />
+
+        <h1>Two Truth's And A Lie Response!</h1>
+        <div>
+          <label>Username:</label>
+        </div>
+        <div>
+          <label>Prompt 1:</label>
+        </div>
+        <div>
+          <label>Prompt 2:</label>
+        </div>
+        <div>
+          <label>Vote 1:</label>
+        </div>
+        <div>
+          <label>Vote 2:</label>
+        </div>
+        <div>
+          <label>Vote 3:</label>
+        </div>
+        <button onClick={this.onClickPollHandler}>Get Poll</button>
+        <br />
       </div>
     );
   };

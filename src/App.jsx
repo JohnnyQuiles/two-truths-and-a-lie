@@ -69,8 +69,8 @@ async function vote(event) {
       promptVote: Number(event.vote)
     }),
   });
-  const pingResponse = await response.text();
-  return pingResponse;
+  return await response.text();
+
 };
 
 async function poll() {
@@ -84,8 +84,8 @@ async function poll() {
       "x-Trigger": "CORS",
     },
   });
-  const pingResponse = await response.text();
-  return pingResponse;
+  return await response.text();
+
 };
 
 
@@ -109,7 +109,12 @@ export class App extends Component {
       promptThree: {
         text: '',
         isLie: false,
-      }
+      },
+      fetchUserName: '',
+      fetchPromptOne: { prompts: "", isLie: false },
+      fetchPromptTwo: { prompts: "", isLie: false },
+      fetchPromptThree: { prompts: "", isLie: false },
+      fetchVote: ''
     };
     // console.log('Orginal:', this.state);
   };
@@ -165,7 +170,17 @@ export class App extends Component {
     const pollRes = await poll();
     const parsePoll = JSON.parse(pollRes)
     console.log("Poll response:", pollRes);
-    console.log(parsePoll);
+    console.log("Parse res", parsePoll);
+
+    this.setState({
+      fetchUserName: parsePoll.currentPrompt.userName,
+      fetchPromptOne: parsePoll.currentPrompt.prompts.promptOne,
+      fetchPromptTwo: parsePoll.currentPrompt.prompts.promptTwo,
+      fetchPromptThree: parsePoll.currentPrompt.prompts.promptThree,
+      fetchedVoteOne: parsePoll.promptVotes[1],
+      fetchedVoteTwo: parsePoll.promptVotes[2],
+      fetchedVoteThree: parsePol.promptVotes[3]
+    })
   };
 
   //DISPLAYS PAGE===============================================================================
@@ -209,22 +224,25 @@ export class App extends Component {
 
         <h1>Two Truth's And A Lie Response!</h1>
         <div>
-          <label>Username:</label>
+          <p>Username:{this.state.fetchUserName}</p>
         </div>
         <div>
-          <label>Prompt 1:</label>
+          <p>Prompt 1:{this.state.fetchPromptOne.prompts}</p>
         </div>
         <div>
-          <label>Prompt 2:</label>
+          <p>Prompt 2:{this.state.fetchPromptTwo.prompts}</p>
         </div>
         <div>
-          <label>Vote 1:</label>
+          <p>Prompt 3:{this.state.fetchPromptThree.prompts}
         </div>
         <div>
-          <label>Vote 2:</label>
+          <p>Vote 1:{this.state.fetchVoteOne}</p>
         </div>
         <div>
-          <label>Vote 3:</label>
+          <p>Vote 2:{this.state.fetchVoteTwo}</p>
+        </div>
+        <div>
+          <p>Vote 3:{this.state.fetchVoteThree}</p>
         </div>
         <button onClick={this.onClickPollHandler}>Get Poll</button>
         <br />

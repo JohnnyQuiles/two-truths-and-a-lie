@@ -179,7 +179,7 @@ export class App extends Component {
       fetchPromptThree: parsePoll.currentPrompt.prompts.promptThree,
       fetchedVoteOne: parsePoll.promptVotes[1],
       fetchedVoteTwo: parsePoll.promptVotes[2],
-      fetchedVoteThree: parsePol.promptVotes[3]
+      fetchedVoteThree: parsePoll.promptVotes[3]
     })
   };
 

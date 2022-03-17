@@ -88,15 +88,13 @@ async function poll() {
 
 };
 
-
 export class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      checkbox: true,
       userName: '',
-      vote: 0,
-
+      vote: '',
+      
       promptOne: {
         text: '',
         isLie: false,
@@ -104,7 +102,6 @@ export class App extends Component {
       promptTwo: {
         text: '',
         isLie: false,
-
       },
       promptThree: {
         text: '',
@@ -114,10 +111,39 @@ export class App extends Component {
       fetchPromptOne: { prompts: "", isLie: false },
       fetchPromptTwo: { prompts: "", isLie: false },
       fetchPromptThree: { prompts: "", isLie: false },
-      fetchVote: ''
+      fetchVoteOne: '',
+      fetchedVoteTwo: '',
+      fetchedVoteThree: ''
     };
-    // console.log('Orginal:', this.state);
-  };
+  }
+
+  // old one 
+  // this.state = {
+  //   checkbox: true,
+  //   userName: '',
+  //   vote: 0,
+
+  //   promptOne: {
+  //     text: '',
+  //     isLie: false,
+  //   },
+  //   promptTwo: {
+  //     text: '',
+  //     isLie: false,
+
+  //   },
+  //   promptThree: {
+  //     text: '',
+  //     isLie: false,
+  //   },
+  //   fetchUserName: '',
+  //   fetchPromptOne: { prompts: "", isLie: false },
+  //   fetchPromptTwo: { prompts: "", isLie: false },
+  //   fetchPromptThree: { prompts: "", isLie: false },
+  //   fetchVote: ''
+  // };
+  // console.log('Orginal:', this.state);
+
   handleOnSubmit = (event) => {
     event.preventDefault();
     this.setState({
@@ -233,7 +259,7 @@ export class App extends Component {
           <p>Prompt 2:{this.state.fetchPromptTwo.prompts}</p>
         </div>
         <div>
-          <p>Prompt 3:{this.state.fetchPromptThree.prompts}
+          <p>Prompt 3:{this.state.fetchPromptThree.prompts}</p>
         </div>
         <div>
           <p>Vote 1:{this.state.fetchVoteOne}</p>
